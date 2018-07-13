@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"context"
 
 	"io/ioutil"
 
@@ -14,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/context"
 	minio "github.com/minio/minio-go"
 )
 
@@ -180,7 +182,7 @@ func main() {
 	r.Handle("/put/{object:[a-zA-Z0-9.-_]+}", putHandler(minioClient))
 	r.Handle("/get/{object:[a-zA-Z0-9.-_]+}", getHandler(minioClient))
 
-    r.Handle("/put-blob/{object:[a-zA-Z0-9.-_]+}", putBlobHandler(minioClient))
+        r.Handle("/put-blob/{object:[a-zA-Z0-9.-_]+}", putBlobHandler(minioClient))
 	r.Handle("/get-blob/{object:[a-zA-Z0-9.-_]+}", getBlobHandler(minioClient))
 
 s := &http.Server{
@@ -188,7 +190,7 @@ s := &http.Server{
 		ReadTimeout:    1 * time.Second,
 		WriteTimeout:   1 * time.Second,
 		MaxHeaderBytes: 1 << 20,
-		Handler:        r,
+		Handler:        context.ClearHandler(r),
 	}
 	log.Fatal(s.ListenAndServe())
 }
